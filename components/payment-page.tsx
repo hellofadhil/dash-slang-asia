@@ -17,7 +17,7 @@ import {
     DropdownMenu, DropdownMenuContent, DropdownMenuItem,
     DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Edit, Trash2, Plus, Search } from "lucide-react"
+import { MoreHorizontal, Edit, Trash2, Plus, Search, Link2Icon, Link2 } from "lucide-react"
 import { usePayments } from "@/components/payment-provider"
 
 interface PaymentFile {
@@ -37,16 +37,47 @@ interface PaymentFileFormData {
     verificationStatus: "pending" | "verified" | "invalid"; // Status verifikasi admin
 }
 
+export interface Participant {
+    id: string
+    name: string
+    phoneNumber: string
+    email: string
+    birthDate: number // timestamp
+    birthPlace: string
+    address: string
+    currentResidence: string
+    reason: string
+    status: "pending" | "accepted" | "rejected" // status peserta (pending menunggu verifikasi)
+    lastEducation: string
+    classId: string // relasi ke Class
+    createdAt: number
+    updatedAt: number
+}
+
+import type { PaymentDetail } from "@/lib/types"
+import Link from "next/link"
+
 export function PaymentsPage() {
-    const { payments, loading, addPayment, updatePayment, deletePayment } = usePayments()
+    const { payments, loading, addPayment, updatePayment, deletePayment, getPaymentDetailById } = usePayments()
     const [searchQuery, setSearchQuery] = useState("")
     const [showDialog, setShowDialog] = useState(false)
     const [editingPayment, setEditingPayment] = useState<PaymentFile | null>(null)
+    const [participant, setParticipant] = useState<PaymentDetail | null>(null)
 
     const filteredPayments = payments.filter((payment) =>
         payment.participantId.toLowerCase().includes(searchQuery.toLowerCase()) ||
         payment.filePath.toLowerCase().includes(searchQuery.toLowerCase())
     )
+
+    payments.map(async (payment) => {
+        const data = await getPaymentDetailById(payment.id)
+        if (data) { // Ensure data is not undefined
+            setParticipant(data)
+        }
+    })
+
+
+
 
     const handleEdit = (payment: PaymentFile) => {
         setEditingPayment(payment)
@@ -89,9 +120,12 @@ export function PaymentsPage() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Participant ID</TableHead>
-                                <TableHead>File Path</TableHead>
+                                <TableHead>Nama</TableHead>
+                                <TableHead>Email</TableHead>
+                                <TableHead>Telephone</TableHead>
                                 <TableHead>Status</TableHead>
+                                <TableHead>Image</TableHead>
+                                <TableHead>Date Payment</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -105,12 +139,28 @@ export function PaymentsPage() {
                             ) : (
                                 filteredPayments.map((payment) => (
                                     <TableRow key={payment.id}>
-                                        <TableCell>{payment.participantId}</TableCell>
-                                        <TableCell>{payment.filePath}</TableCell>
+                                        <TableCell>{participant?.participant.name}</TableCell>
+                                        <TableCell>{participant?.participant.email}</TableCell>
+                                        <TableCell>{participant?.participant.phoneNumber}</TableCell>
                                         <TableCell>
                                             <Badge variant={payment.verified ? "default" : "secondary"}>
                                                 {payment.verified ? "Verified" : "Not Verified"}
                                             </Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Link href={payment.filePath} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:underline">
+                                                <Link2 size={16} />
+                                                File
+                                            </Link>
+                                        </TableCell>
+                                        <TableCell>
+                                            {new Date(Number(participant?.participant.createdAt)).toLocaleDateString("en-GB", {
+                                                day: "numeric",
+                                                month: "long",
+                                                year: "numeric",
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                            })}
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <DropdownMenu>

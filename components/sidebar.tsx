@@ -19,6 +19,9 @@ import {
   Tags,
   ChevronDown,
   ChevronRight,
+  GraduationCapIcon,
+  UsersRoundIcon,
+  BanknoteIcon
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes"
@@ -70,7 +73,8 @@ export function Sidebar() {
       pathname === "/events" ||
       pathname === "/trainers" ||
       pathname === "/partners" ||
-      pathname === "/event-categories"
+      pathname === "/event-categories" ||
+      pathname === "/class"
     ) {
       setTrainingServicesOpen(true)
     }
@@ -89,6 +93,12 @@ export function Sidebar() {
       icon: Settings,
       href: "/settings",
       active: pathname === "/settings",
+    },
+    {
+      label: "Pembayaran",
+      icon: BanknoteIcon,
+      href: "/payment",
+      active: pathname === "/payment",
     },
   ]
 
@@ -118,6 +128,13 @@ export function Sidebar() {
       href: "/event-categories",
       active: pathname === "/event-categories",
     },
+    {
+      label: "Kelas",
+      icon: UsersRoundIcon,
+      href: "/class",
+      active: pathname === "/class",
+    },
+
   ]
 
   /**

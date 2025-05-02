@@ -139,7 +139,6 @@ export function PaymentsProvider({ children }: { children: React.ReactNode }) {
       if (!participantSnap) return undefined
 
       return {
-        payment,
         participant: {
           id: payment.participantId,
           ...participantSnap,

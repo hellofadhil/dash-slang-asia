@@ -201,25 +201,6 @@ export interface ClassFormData {
   icon?: string;
 }
 
-
-
-// export interface Participant {
-//   id: string
-//   name: string
-//   phoneNumber: string
-//   email: string
-//   birthDate: number // timestamp
-//   birthPlace: string
-//   address: string
-//   currentResidence: string
-//   reason: string
-//   status: "pending" | "accepted" | "rejected"
-//   lastEducation: string
-//   classId: string // relasi ke Class
-//   createdAt: number
-//   updatedAt: number
-// }
-
 export interface Participant {
   id: string
   name: string
@@ -260,6 +241,5 @@ export interface PaymentFileFormData {
 }
 
 export interface PaymentDetail {
-  payment: PaymentFile
   participant: Participant
 }
